@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "vuejs: build",
+            "type": "npm",
+            "script": "install",
+            "isBackground": true,
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "vuejs: start",
+            "type": "npm",
+            "script": "serve",
+            "args": ["--mode", "local"],
+            "isBackground": true,
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        }
+    ]
+}

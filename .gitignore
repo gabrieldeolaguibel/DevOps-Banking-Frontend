@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 # VS Code
-.vscode
+#.vscode deleted so everyone can have the setting on git
