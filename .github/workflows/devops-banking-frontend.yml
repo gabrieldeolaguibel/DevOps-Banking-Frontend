@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  FRONTEND_WEBAPP_DEV: ketis-fe-dev
-  FRONTEND_WEBAPP_UAT: ketis-fe-uat
+  FRONTEND_WEBAPP_DEV: monke-fe-dev
+  FRONTEND_WEBAPP_UAT: monke-fe-uat
 
 jobs:
   build:
