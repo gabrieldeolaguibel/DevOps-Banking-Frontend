@@ -4,6 +4,7 @@ import Skull from "../components/Skull.vue";
 import AppAccounts from "../components/AppAccounts.vue";
 import HomePage from "../components/HomePage.vue";
 import Authentication from "../components/Authenticate.vue";
+import CustomerAccount from "../components/CustomerAccount.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes = [
     path: "/HomePage",
     name: "HomePage",
     component: HomePage,
+  },
+  {
+    path: "/accounts/customer/:id",
+    name: "CustomerAccount",
+    component: CustomerAccount,
   },
 ];
 

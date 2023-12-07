@@ -85,6 +85,21 @@
       >
         <b-form @submit="onSubmit" class="w-100">
           <b-form-group
+            id="form-id-group"
+            label="Account ID:"
+            label-for="form-name-input"
+          >
+            <b-form-input
+              id="form-id-input"
+              type="text"
+              v-model="createAccountForm.id"
+              placeholder="Account ID"
+              required
+            >
+            </b-form-input>
+          </b-form-group>
+
+          <b-form-group
             id="form-name-group"
             label="Account Name:"
             label-for="form-name-input"
@@ -94,6 +109,21 @@
               type="text"
               v-model="createAccountForm.name"
               placeholder="Account Name"
+              required
+            >
+            </b-form-input>
+          </b-form-group>
+
+          <b-form-group
+            id="form-password-group"
+            label="Password:"
+            label-for="form-password-input"
+          >
+            <b-form-input
+              id="form-password-input"
+              type="password"
+              v-model="createAccountForm.password"
+              placeholder="Password"
               required
             >
             </b-form-input>
@@ -172,7 +202,9 @@ export default {
     return {
       accounts: [],
       createAccountForm: {
+        id: "",
         name: "",
+        password: "",
         currency: "",
         country: "",
       },
@@ -274,7 +306,9 @@ export default {
 
     // Initialize forms empty
     initForm() {
+      this.createAccountForm.id = "";
       this.createAccountForm.name = "";
+      this.createAccountForm.password = "";
       this.createAccountForm.currency = "";
       this.createAccountForm.country = "";
       this.editAccountForm.id = "";
@@ -286,7 +320,9 @@ export default {
       e.preventDefault(); //prevent default form submit form the browser
       this.$refs.addAccountModal.hide(); //hide the modal when submitted
       const payload = {
+        id: this.createAccountForm.id,
         name: this.createAccountForm.name,
+        password: this.createAccountForm.password,
         currency: this.createAccountForm.currency,
         country: this.createAccountForm.country,
       };
