@@ -48,7 +48,7 @@
                     </button>
                     <button
                       type="button"
-                      class="btn btn-danger btn-sm"
+                      class="btn btn-info btn-sm"
                       v-b-modal.deposit-modal
                       @click="deposit(account)"
                     >
@@ -141,30 +141,30 @@
       </b-modal>
       <!-- End of Modal for transferring money -->
       <!-- Start of Modal for deposit-->
-        <b-modal
-          ref="depositModal"
-          id="deposit-modal"
-          title="Deposit"
-          hide-backdrop
-          hide-footer
-        >
-          <b-form @submit="onSubmitDeposit" class="w-100">
-            <b-form-group
-              id="form-deposit-group"
-              label="Deposit"
-              label-for="form-deposit-input"
-            >
-              <b-form-input
-                id="form-deposit-input"
-                v-model="depositForm.deposit"
-                placeholder="Enter deposit"
-                required
-              ></b-form-input>
-            </b-form-group>
-            <b-button type="submit" variant="outline-info">Submit</b-button>
-          </b-form>
-        </b-modal>
-        <!-- End of Modal for deposit -->
+      <b-modal
+        ref="depositModal"
+        id="deposit-modal"
+        title="Deposit"
+        hide-backdrop
+        hide-footer
+      >
+        <b-form @submit="onSubmitDeposit" class="w-100">
+          <b-form-group
+            id="form-deposit-group"
+            label="Deposit"
+            label-for="form-deposit-input"
+          >
+            <b-form-input
+              id="form-deposit-input"
+              v-model="depositForm.deposit"
+              placeholder="Enter deposit"
+              required
+            ></b-form-input>
+          </b-form-group>
+          <b-button type="submit" variant="outline-info">Submit</b-button>
+        </b-form>
+      </b-modal>
+      <!-- End of Modal for deposit -->
     </div>
   </div>
 </template>
@@ -200,7 +200,6 @@ export default {
         .get(path)
         .then((response) => {
           this.accounts = response.data.accounts;
-          console.log(this.accounts);
         })
         .catch((error) => {
           console.log(error);
@@ -241,8 +240,6 @@ export default {
         });
     },
     RESTdeposit(payload, id) {
-      console.log("Deposit payload below from rest")
-      console.log(payload)
       const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${id}/deposit`;
       axios
         .put(path, payload)
@@ -290,17 +287,14 @@ export default {
       this.RESTtransferMoney(payload, this.$route.params.id);
       this.initForm();
     },
+
     onSubmitDeposit(e) {
-      console.log(e)
       e.preventDefault();
       this.$refs.depositModal.hide();
-      console.log("Deposit form payload creation below");
-      console.log(this.depositForm)
       const payload = {
         account_number: this.depositForm.account_number,
         deposit: this.depositForm.deposit,
       };
-      console.log("Payload below");
       this.RESTdeposit(payload, this.$route.params.id);
       this.initForm();
     },
