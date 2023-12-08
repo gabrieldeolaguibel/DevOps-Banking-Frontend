@@ -46,6 +46,14 @@
                     >
                       Transfer
                     </button>
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      v-b-modal.deposit-modal
+                      @click="deposit(account)"
+                    >
+                      Deposit
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -128,9 +136,35 @@
               required
             ></b-form-input>
           </b-form-group>
+          <b-button type="submit" variant="outline-info">Submit</b-button>
         </b-form>
       </b-modal>
       <!-- End of Modal for transferring money -->
+      <!-- Start of Modal for deposit-->
+        <b-modal
+          ref="depositModal"
+          id="deposit-modal"
+          title="Deposit"
+          hide-backdrop
+          hide-footer
+        >
+          <b-form @submit="onSubmitDeposit" class="w-100">
+            <b-form-group
+              id="form-deposit-group"
+              label="Deposit"
+              label-for="form-deposit-input"
+            >
+              <b-form-input
+                id="form-deposit-input"
+                v-model="depositForm.deposit"
+                placeholder="Enter deposit"
+                required
+              ></b-form-input>
+            </b-form-group>
+            <b-button type="submit" variant="outline-info">Submit</b-button>
+          </b-form>
+        </b-modal>
+        <!-- End of Modal for deposit -->
     </div>
   </div>
 </template>
@@ -149,6 +183,10 @@ export default {
         account_number1: "",
         account_number2: "",
         amount: "",
+      },
+      depositForm: {
+        account_number: "",
+        deposit: "",
       },
       showMessage: false,
       message: "",
@@ -187,7 +225,7 @@ export default {
     },
 
     RESTtransferMoney(payload) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/transfer`;
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${id1}/transfer`;
       axios
         .put(path, payload)
         .then((response) => {
@@ -202,12 +240,29 @@ export default {
           console.log(error);
         });
     },
+    RESTdeposit(payload) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${payload.account_number}/deposit`;
+      axios
+        .put(path, payload)
+        .then((response) => {
+          this.message = "Deposited successfully";
+          this.showMessage = true;
 
+          setTimeout(() => {
+            this.showMessage = false;
+          }, 3000);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     initForm() {
       this.transferForm.account_number1 = "";
       this.transferForm.account_number2 = "";
       this.transferForm.amount = "";
       this.changePasswordForm.password = "";
+      this.depositForm.account_number = "";
+      this.depositForm.deposit = "";
     },
 
     onSubmitUpdate(e) {
@@ -228,7 +283,24 @@ export default {
         account_number2: this.transferForm.account_number2,
         amount: this.transferForm.amount,
       };
+      console.log("payload below");
+      console.log(payload);
       this.RESTtransferMoney(payload);
+      this.initForm();
+    },
+    onSubmitDeposit(e) {
+      console.log(e)
+      e.preventDefault();
+      this.$refs.depositModal.hide();
+      console.log("Deposit form payload creation below");
+      console.log(this.depositForm)
+      const payload = {
+        account_number: this.depositForm.account_number,
+        deposit: this.depositForm.deposit,
+      };
+    
+      console.log("Payload below");
+      this.RESTdeposit(payload);
       this.initForm();
     },
 
@@ -240,6 +312,11 @@ export default {
       this.transferForm.account_number1 = account.account_number;
       this.transferForm.account_number2 = "";
       this.transferForm.amount = "";
+    },
+
+    deposit(account) {
+      this.depositForm.account_number = account.account_number;
+      this.depositForm.deposit = "";
     },
   },
 
