@@ -43,6 +43,7 @@ export default {
             this.$router.push(`/accounts/customer/${response.data.id}`);
           } else {
             console.log("The response does not have any fields.");
+            alert("Incorrect username or password.");
           }
         })
         .catch((error) => {
