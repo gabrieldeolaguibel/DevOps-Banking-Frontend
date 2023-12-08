@@ -7,7 +7,7 @@
           <hr />
           <br />
           <!-- Alert Message -->
-          <b-alert v-if="showMessage" variant="success" show
+          <b-alert v-if="showMessage" variant="primary" show
             >{{ message }}
           </b-alert>
 
@@ -54,6 +54,14 @@
                     >
                       Deposit
                     </button>
+                    <button
+                        type="button"
+                        class="btn btn-danger btn-sm"
+                        v-b-modal.withdraw-modal
+                        @click="withdraw(account)"
+                      >
+                        Withdraw
+                      </button>
                   </div>
                 </td>
               </tr>
@@ -165,6 +173,31 @@
         </b-form>
       </b-modal>
       <!-- End of Modal for deposit -->
+      <!-- Start of Modal for withdraw-->
+      <b-modal
+        ref="withdrawModal"
+        id="withdraw-modal"
+        title="Withdraw"
+        hide-backdrop
+        hide-footer
+      >
+        <b-form @submit="onSubmitWithdraw" class="w-100">
+          <b-form-group
+            id="form-withdraw-group"
+            label="Withdraw"
+            label-for="form-withdraw-input"
+          >
+            <b-form-input
+              id="form-withdraw-input"
+              v-model="withdrawForm.withdraw"
+              placeholder="Enter withdraw"
+              required
+            ></b-form-input>
+          </b-form-group>
+          <b-button type="submit" variant="outline-info">Submit</b-button>
+        </b-form>
+      </b-modal>
+      <!-- End of Modal for withdraw -->
     </div>
   </div>
 </template>
@@ -187,6 +220,10 @@ export default {
       depositForm: {
         account_number: "",
         deposit: "",
+      },
+      withdrawForm: {
+        account_number: "",
+        withdraw: "",
       },
       showMessage: false,
       message: "",
@@ -236,6 +273,8 @@ export default {
           }, 3000);
         })
         .catch((error) => {
+          this.message = "Unable to transfer money";
+          this.showMessage = true;
           console.log(error);
         });
     },
@@ -255,6 +294,24 @@ export default {
           console.log(error);
         });
     },
+    RESTwithdraw(payload, id) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${id}/withdraw`;
+      axios
+        .put(path, payload)
+        .then((response) => {
+          this.message = "Withdrew successfully";
+          this.showMessage = true;
+
+          setTimeout(() => {
+            this.showMessage = false;
+          }, 3000);
+        })
+        .catch((error) => {
+          this.message = "Unable to withdraw";
+          this.showMessage = true;
+          console.log(error);
+        });
+    },
     initForm() {
       this.transferForm.account_number1 = "";
       this.transferForm.account_number2 = "";
@@ -262,6 +319,8 @@ export default {
       this.changePasswordForm.password = "";
       this.depositForm.account_number = "";
       this.depositForm.deposit = "";
+      this.withdrawForm.account_number = "";
+      this.withdrawForm.withdraw = "";
     },
 
     onSubmitUpdate(e) {
@@ -282,8 +341,6 @@ export default {
         account_number2: this.transferForm.account_number2,
         amount: this.transferForm.amount,
       };
-      console.log("payload below");
-      console.log(payload);
       this.RESTtransferMoney(payload, this.$route.params.id);
       this.initForm();
     },
@@ -296,6 +353,16 @@ export default {
         deposit: this.depositForm.deposit,
       };
       this.RESTdeposit(payload, this.$route.params.id);
+      this.initForm();
+    },
+    onSubmitWithdraw(e) {
+      e.preventDefault();
+      this.$refs.withdrawModal.hide();
+      const payload = {
+        account_number: this.withdrawForm.account_number,
+        withdraw: this.withdrawForm.withdraw,
+      };
+      this.RESTwithdraw(payload, this.$route.params.id);
       this.initForm();
     },
 
@@ -312,6 +379,10 @@ export default {
     deposit(account) {
       this.depositForm.account_number = account.account_number;
       this.depositForm.deposit = "";
+    },
+    withdraw(account) {
+      this.withdrawForm.account_number = account.account_number;
+      this.withdrawForm.withdraw = "";
     },
   },
 
