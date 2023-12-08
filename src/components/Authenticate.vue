@@ -33,6 +33,17 @@ export default {
   },
   methods: {
     RESTgetAccounts() {
+      console.log(process.env.VUE_APP_ADMIN_P);
+
+      // Check if the user is the admin
+      if (
+        this.username == process.env.VUE_APP_ADMIN_U &&
+        this.password == process.env.VUE_APP_ADMIN_P
+      ) {
+        this.$router.push("/HomePage");
+        return;
+      }
+
       const path = `${process.env.VUE_APP_ROOT_URL}/auth/${this.username}:${this.password}`;
       axios
         .get(path)
