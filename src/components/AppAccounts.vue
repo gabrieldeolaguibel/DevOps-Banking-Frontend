@@ -33,7 +33,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="account in accounts" :key="account.id">
+              <tr v-for="account in accounts" :key="account.account_number">
                 <td>{{ account.name }}</td>
                 <td>{{ account.account_number }}</td>
                 <td>{{ account.balance }}</td>
@@ -257,8 +257,8 @@ export default {
     },
 
     // Update function
-    RESTupdateAccount(payload, accountId) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${accountId}`;
+    RESTupdateAccount(payload, account_number) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${account_number}`;
       axios
         .put(path, payload)
         .then((response) => {
@@ -279,14 +279,14 @@ export default {
     },
 
     // Delete account
-    RESTdeleteAccount(accountId) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${accountId}`;
+    RESTdeleteAccount(account_number) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${account_number}`;
       axios
         .delete(path)
         .then((response) => {
           this.RESTgetAccounts();
           // For message alert
-          this.message = "Account Deleted succesfully!";
+          this.message = "Account Deleted successfully!";
           // To actually show the message
           this.showMessage = true;
           // To hide the message after 3 seconds
@@ -311,7 +311,7 @@ export default {
       this.createAccountForm.password = "";
       this.createAccountForm.currency = "";
       this.createAccountForm.country = "";
-      this.editAccountForm.id = "";
+      this.editAccountForm.account_number = "";
       this.editAccountForm.name = "";
     },
 
@@ -337,7 +337,7 @@ export default {
       const payload = {
         name: this.editAccountForm.name,
       };
-      this.RESTupdateAccount(payload, this.editAccountForm.id);
+      this.RESTupdateAccount(payload, this.editAccountForm.account_number);
       this.initForm();
     },
 
@@ -348,7 +348,7 @@ export default {
 
     // Handle Delete button
     deleteAccount(account) {
-      this.RESTdeleteAccount(account.id);
+      this.RESTdeleteAccount(account.account_number);
     },
   },
 

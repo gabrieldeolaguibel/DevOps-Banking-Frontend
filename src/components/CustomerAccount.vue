@@ -42,9 +42,7 @@
                       type="button"
                       class="btn btn-danger btn-sm"
                       v-b-modal.transfer-modal
-                      @click="
-                        transfer(account_number1, account_number2, amount)
-                      "
+                      @click="transfer(account)"
                     >
                       Transfer
                     </button>
@@ -60,7 +58,7 @@
       </div>
       <!-- Start of Modal for changing password-->
       <b-modal
-        ref="change-password-modal"
+        ref="changePasswordModal"
         id="change-password-modal"
         title="Change Password"
         hide-backdrop
@@ -85,52 +83,52 @@
       <!-- End of Modal for changing password-->
       <!-- Start of Modal for transferring money -->
       <b-modal
-        ref="transfer-modal"
+        ref="transferModal"
         id="transfer-modal"
         title="Transfer Money"
         hide-backdrop
         hide-footer
       >
-      <b-form @submit="onSubmitTransfer" class="w-100">
-        <b-form-group
-          id="form-account-number1-group"
-          label="Account Number 1"
-          label-for="form-account-number1-input"
-        >
-          <b-form-input
-            id="form-account-number1-input"
-            type="text"
-            v-model="transferForm.account_number1"
-            placeholder="Enter account number 1"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          id="form-account-number2-group"
-          label="Account Number 2"
-          label-for="form-account-number2-input"
-        >
-          <b-form-input
-            id="form-account-number2-input"
-            type="text"
-            v-model="transferForm.account_number2"
-            placeholder="Enter account number 2"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          id="form-amount-group"
-          label="Amount"
-          label-for="form-amount-input"
-        >
-          <b-form-input
-            id="form-amount-input"
-            type="text"
-            v-model="transferForm.amount"
-            placeholder="Enter amount"
-            required
-          ></b-form-input>
-        </b-form-group>
+        <b-form @submit="onSubmitTransfer" class="w-100">
+          <b-form-group
+            id="form-account-number1-group"
+            label="Account Number 1"
+            label-for="form-account-number1-input"
+          >
+            <b-form-input
+              id="form-account-number1-input"
+              type="text"
+              v-model="transferForm.account_number1"
+              placeholder="Enter account number 1"
+              required
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group
+            id="form-account-number2-group"
+            label="Account Number 2"
+            label-for="form-account-number2-input"
+          >
+            <b-form-input
+              id="form-account-number2-input"
+              type="text"
+              v-model="transferForm.account_number2"
+              placeholder="Enter account number 2"
+              required
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group
+            id="form-amount-group"
+            label="Amount"
+            label-for="form-amount-input"
+          >
+            <b-form-input
+              id="form-amount-input"
+              v-model="transferForm.amount"
+              placeholder="Enter amount"
+              required
+            ></b-form-input>
+          </b-form-group>
+        </b-form>
       </b-modal>
       <!-- End of Modal for transferring money -->
     </div>
@@ -140,7 +138,114 @@
 <script>
 import axios from "axios";
 export default {
-    name: "CustomerAccount",
-    
-}
+  name: "CustomerAccount",
+  data() {
+    return {
+      accounts: [],
+      changePasswordForm: {
+        password: "",
+      },
+      transferForm: {
+        account_number1: "",
+        account_number2: "",
+        amount: "",
+      },
+      showMessage: false,
+      message: "",
+    };
+  },
+  methods: {
+    // Get all accounts based on id
+    RESTGetAccounts(id) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/customer/${id}`;
+      axios
+        .get(path)
+        .then((response) => {
+          this.accounts = response.data.accounts;
+          console.log(this.accounts);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    RESTupdatePassword(payload, id) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${id}/change_password`;
+      axios
+        .put(path, payload)
+        .then((response) => {
+          this.message = "Password changed successfully";
+          this.showMessage = true;
+
+          setTimeout(() => {
+            this.showMessage = false;
+          }, 3000);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    RESTtransferMoney(payload) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/transfer`;
+      axios
+        .put(path, payload)
+        .then((response) => {
+          this.message = "Money transferred successfully";
+          this.showMessage = true;
+
+          setTimeout(() => {
+            this.showMessage = false;
+          }, 3000);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    initForm() {
+      this.transferForm.account_number1 = "";
+      this.transferForm.account_number2 = "";
+      this.transferForm.amount = "";
+      this.changePasswordForm.password = "";
+    },
+
+    onSubmitUpdate(e) {
+      e.preventDefault();
+      this.$refs.changePasswordModal.hide();
+      const payload = {
+        password: this.changePasswordForm.password,
+      };
+      this.RESTupdatePassword(payload, this.$route.params.id);
+      this.initForm();
+    },
+
+    onSubmitTransfer(e) {
+      e.preventDefault();
+      this.$refs.transferModal.hide();
+      const payload = {
+        account_number1: this.transferForm.account_number1,
+        account_number2: this.transferForm.account_number2,
+        amount: this.transferForm.amount,
+      };
+      this.RESTtransferMoney(payload);
+      this.initForm();
+    },
+
+    changePassword(account) {
+      this.changePasswordForm.password = account.password;
+    },
+
+    transfer(account) {
+      this.transferForm.account_number1 = account.account_number;
+      this.transferForm.account_number2 = "";
+      this.transferForm.amount = "";
+    },
+  },
+
+  // Get all accounts based on id
+  created() {
+    this.RESTGetAccounts(this.$route.params.id);
+  },
+};
 </script>
