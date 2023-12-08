@@ -33,7 +33,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="account in accounts" :key="account.id">
+              <tr v-for="account in accounts" :key="account.account_number">
                 <td>{{ account.name }}</td>
                 <td>{{ account.account_number }}</td>
                 <td>{{ account.balance }}</td>
@@ -85,6 +85,21 @@
       >
         <b-form @submit="onSubmit" class="w-100">
           <b-form-group
+            id="form-id-group"
+            label="Account ID:"
+            label-for="form-name-input"
+          >
+            <b-form-input
+              id="form-id-input"
+              type="text"
+              v-model="createAccountForm.id"
+              placeholder="Account ID"
+              required
+            >
+            </b-form-input>
+          </b-form-group>
+
+          <b-form-group
             id="form-name-group"
             label="Account Name:"
             label-for="form-name-input"
@@ -94,6 +109,21 @@
               type="text"
               v-model="createAccountForm.name"
               placeholder="Account Name"
+              required
+            >
+            </b-form-input>
+          </b-form-group>
+
+          <b-form-group
+            id="form-password-group"
+            label="Password:"
+            label-for="form-password-input"
+          >
+            <b-form-input
+              id="form-password-input"
+              type="password"
+              v-model="createAccountForm.password"
+              placeholder="Password"
               required
             >
             </b-form-input>
@@ -172,7 +202,9 @@ export default {
     return {
       accounts: [],
       createAccountForm: {
+        id: "",
         name: "",
+        password: "",
         currency: "",
         country: "",
       },
@@ -225,8 +257,8 @@ export default {
     },
 
     // Update function
-    RESTupdateAccount(payload, accountId) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${accountId}`;
+    RESTupdateAccount(payload, account_number) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${account_number}`;
       axios
         .put(path, payload)
         .then((response) => {
@@ -247,14 +279,14 @@ export default {
     },
 
     // Delete account
-    RESTdeleteAccount(accountId) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${accountId}`;
+    RESTdeleteAccount(account_number) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${account_number}`;
       axios
         .delete(path)
         .then((response) => {
           this.RESTgetAccounts();
           // For message alert
-          this.message = "Account Deleted succesfully!";
+          this.message = "Account Deleted successfully!";
           // To actually show the message
           this.showMessage = true;
           // To hide the message after 3 seconds
@@ -274,10 +306,12 @@ export default {
 
     // Initialize forms empty
     initForm() {
+      this.createAccountForm.id = "";
       this.createAccountForm.name = "";
+      this.createAccountForm.password = "";
       this.createAccountForm.currency = "";
       this.createAccountForm.country = "";
-      this.editAccountForm.id = "";
+      this.editAccountForm.account_number = "";
       this.editAccountForm.name = "";
     },
 
@@ -286,7 +320,9 @@ export default {
       e.preventDefault(); //prevent default form submit form the browser
       this.$refs.addAccountModal.hide(); //hide the modal when submitted
       const payload = {
+        id: this.createAccountForm.id,
         name: this.createAccountForm.name,
+        password: this.createAccountForm.password,
         currency: this.createAccountForm.currency,
         country: this.createAccountForm.country,
       };
@@ -301,7 +337,7 @@ export default {
       const payload = {
         name: this.editAccountForm.name,
       };
-      this.RESTupdateAccount(payload, this.editAccountForm.id);
+      this.RESTupdateAccount(payload, this.editAccountForm.account_number);
       this.initForm();
     },
 
@@ -312,7 +348,7 @@ export default {
 
     // Handle Delete button
     deleteAccount(account) {
-      this.RESTdeleteAccount(account.id);
+      this.RESTdeleteAccount(account.account_number);
     },
   },
 
