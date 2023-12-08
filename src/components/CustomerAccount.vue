@@ -224,8 +224,8 @@ export default {
         });
     },
 
-    RESTtransferMoney(payload) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${id1}/transfer`;
+    RESTtransferMoney(payload, id) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${id}/transfer`;
       axios
         .put(path, payload)
         .then((response) => {
@@ -240,8 +240,10 @@ export default {
           console.log(error);
         });
     },
-    RESTdeposit(payload) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${payload.account_number}/deposit`;
+    RESTdeposit(payload, id) {
+      console.log("Deposit payload below from rest")
+      console.log(payload)
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${id}/deposit`;
       axios
         .put(path, payload)
         .then((response) => {
@@ -285,7 +287,7 @@ export default {
       };
       console.log("payload below");
       console.log(payload);
-      this.RESTtransferMoney(payload);
+      this.RESTtransferMoney(payload, this.$route.params.id);
       this.initForm();
     },
     onSubmitDeposit(e) {
@@ -298,9 +300,8 @@ export default {
         account_number: this.depositForm.account_number,
         deposit: this.depositForm.deposit,
       };
-    
       console.log("Payload below");
-      this.RESTdeposit(payload);
+      this.RESTdeposit(payload, this.$route.params.id);
       this.initForm();
     },
 
