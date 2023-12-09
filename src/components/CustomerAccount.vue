@@ -55,13 +55,13 @@
                       Deposit
                     </button>
                     <button
-                        type="button"
-                        class="btn btn-danger btn-sm"
-                        v-b-modal.withdraw-modal
-                        @click="withdraw(account)"
-                      >
-                        Withdraw
-                      </button>
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      v-b-modal.withdraw-modal
+                      @click="withdraw(account)"
+                    >
+                      Withdraw
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -117,6 +117,7 @@
               v-model="transferForm.account_number1"
               placeholder="Enter account number 1"
               required
+              readonly
             ></b-form-input>
           </b-form-group>
           <b-form-group
@@ -128,7 +129,7 @@
               id="form-account-number2-input"
               type="text"
               v-model="transferForm.account_number2"
-              placeholder="Enter account number 2"
+              placeholder="Enter the account to transfer to"
               required
             ></b-form-input>
           </b-form-group>
@@ -271,6 +272,7 @@ export default {
           setTimeout(() => {
             this.showMessage = false;
           }, 3000);
+          this.$router.go();
         })
         .catch((error) => {
           this.message = "Unable to transfer money";
@@ -289,6 +291,7 @@ export default {
           setTimeout(() => {
             this.showMessage = false;
           }, 3000);
+          this.$router.go();
         })
         .catch((error) => {
           console.log(error);
@@ -305,6 +308,7 @@ export default {
           setTimeout(() => {
             this.showMessage = false;
           }, 3000);
+          this.$router.go();
         })
         .catch((error) => {
           this.message = "Unable to withdraw";
