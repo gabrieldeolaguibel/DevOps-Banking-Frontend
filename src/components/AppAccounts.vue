@@ -7,7 +7,7 @@
           <hr />
           <br />
           <!-- Allert Message -->
-          <b-alert v-if="showMessage" variant="success" show>{{
+          <b-alert v-if="showMessage" variant="primary" show>{{
             message
           }}</b-alert>
           <!-- b-alert v-if="error" variant="danger" show>{{ error }}</b-alert-->
@@ -62,6 +62,7 @@
                     <button
                       type="button"
                       class="btn btn-danger btn-sm"
+                      v-b-modal.delete-account-modal
                       @click="deleteAccount(account)"
                     >
                       Delete
@@ -190,6 +191,20 @@
         </b-form>
       </b-modal>
       <!-- End of Modal for Edit Account-->
+      <!-- Start of Modal for Delete Account-->
+        <b-modal
+          ref="deleteAccountModal"
+          id="delete-account-modal"
+          title="Delete the account"
+          hide-backdrop
+          hide-footer
+        >
+          <b-form @submit="onSubmitDelete" class="w-100">
+            <p>Please, confirm that you want to delete this account.</p>
+            <b-button type="submit" variant="outline-info">Delete</b-button>
+          </b-form>
+        </b-modal>
+        <!-- End of Modal for Delete Account-->
     </div>
   </div>
 </template>
@@ -209,8 +224,11 @@ export default {
         country: "",
       },
       editAccountForm: {
-        id: "",
+        account_number: "",
         name: "",
+      },
+      deleteAccountForm: {
+        account_number: "",
       },
       showMessage: false,
       message: "",
@@ -257,8 +275,8 @@ export default {
     },
 
     // Update function
-    RESTupdateAccount(payload, account_number) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${account_number}`;
+    RESTchangeAccountName(payload) {
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${payload.account_number}`;
       axios
         .put(path, payload)
         .then((response) => {
@@ -279,8 +297,9 @@ export default {
     },
 
     // Delete account
-    RESTdeleteAccount(account_number) {
-      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${account_number}`;
+    RESTdeleteAccount(payload) {
+      console.log("Deleting", payload.account_number)
+      const path = `${process.env.VUE_APP_ROOT_URL}/accounts/${payload.account_number}`;
       axios
         .delete(path)
         .then((response) => {
@@ -336,8 +355,20 @@ export default {
       this.$refs.editAccountModal.hide(); //hide the modal when submitted
       const payload = {
         name: this.editAccountForm.name,
+        account_number: this.editAccountForm.account_number,
       };
-      this.RESTupdateAccount(payload, this.editAccountForm.account_number);
+      this.RESTchangeAccountName(payload);
+      this.initForm();
+    },
+
+    // Handle submit event for delete account
+    onSubmitDelete(e) {
+      e.preventDefault(); //prevent default form submit form the browser
+      this.$refs.deleteAccountModal.hide(); //hide the modal when submitted
+      const payload = {
+        account_number: this.deleteAccountForm.account_number,
+      };
+      this.RESTdeleteAccount(payload);
       this.initForm();
     },
 
@@ -348,7 +379,7 @@ export default {
 
     // Handle Delete button
     deleteAccount(account) {
-      this.RESTdeleteAccount(account.account_number);
+      this.deleteAccountForm = account;
     },
   },
 
