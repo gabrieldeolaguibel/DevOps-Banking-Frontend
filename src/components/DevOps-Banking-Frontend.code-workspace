@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "DevOps-Banking-Infrastructure",
+			"path": "../../../DevOps-Banking-Infrastructure"
+		},
+		{
+			"name": "DevOps-Banking-Backend",
+			"path": "../../../DevOps-Banking-Backend"
+		}
+	],
+	"settings": {}
+}
