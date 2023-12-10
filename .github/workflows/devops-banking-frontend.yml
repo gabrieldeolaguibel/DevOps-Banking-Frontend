@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
 
 env:
-  FRONTEND_WEBAPP_DEV: monke-fe-dev
-  FRONTEND_WEBAPP_UAT: monke-fe-uat
-  FRONTEND_WEBAPP_PROD: monke-fe-prod
+  FRONTEND_WEBAPP_DEV: lemonke-fe-dev
+  FRONTEND_WEBAPP_UAT: lemonke-fe-uat
+  FRONTEND_WEBAPP_PROD: lemonke-fe-prod
 
 jobs:
   build:
